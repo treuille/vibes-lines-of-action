@@ -82,9 +82,13 @@
       for (let y = 0; y < SIZE; y++) {
         state[y] = [];
         for (let x = 0; x < SIZE; x++) {
-          if (y === 0 || y === SIZE - 1) state[y][x] = 'black';
-          else if (x === 0 || x === SIZE - 1) state[y][x] = 'white';
-          else state[y][x] = null;
+          if ((y === 0 && x !== 0 && x !== 7) || (y === 7 && x !== 0 && x !== 7)) {
+            state[y][x] = 'black';
+          } else if ((x === 0 && y !== 0 && y !== 7) || (x === 7 && y !== 0 && y !== 7)) {
+            state[y][x] = 'white';
+          } else {
+            state[y][x] = null;
+          }
         }
       }
     }
@@ -128,6 +132,20 @@
       const dirs = [[1,0],[0,1],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
       for (let [dx, dy] of dirs) {
         const n = countInLine(x, y, dx, dy);
+        let blocked = false;
+        for (let i = 1; i < n; i++) {
+          const nx = x + dx * i;
+          const ny = y + dy * i;
+          if (nx < 0 || nx >= SIZE || ny < 0 || ny >= SIZE) {
+            blocked = true;
+            break;
+          }
+          if (state[ny][nx] && state[ny][nx] !== piece) {
+            blocked = true;
+            break;
+          }
+        }
+        if (blocked) continue;
         const tx = x + dx * n;
         const ty = y + dy * n;
         if (tx >= 0 && tx < SIZE && ty >= 0 && ty < SIZE) {
